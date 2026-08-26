@@ -1,0 +1,138 @@
+﻿@model GerenciadorAcademico.ViewModels.ProjetosIndexViewModel
+
+@{
+    ViewData["Title"] = "Projetos Acadêmicos";
+}
+
+<div class="page-heading">
+    <div>
+        <h1>Projetos Acadêmicos</h1>
+        <p>Gerencie os projetos cadastrados.</p>
+    </div>
+
+    <a asp-action="Cadastrar" class="button">
+        Novo Projeto
+    </a>
+</div>
+
+<!-- PESQUISA -->
+<form asp-action="Index" method="get" class="toolbar">
+    <div class="search-form">
+        <input type="text"
+               name="pesquisa"
+               value="@Model.textopesquisa"
+               class="input"
+               placeholder="Pesquisar por título..." />
+
+        <input type="hidden"
+               name="ordenarPor"
+               value="@Model.ordenarPor" />
+
+        <button type="submit" class="button">
+            Pesquisar
+        </button>
+
+        <a asp-action="Index" class="button secondary">
+            Limpar
+        </a>
+    </div>
+</form>
+
+<!-- ORDENAÇÃO -->
+<div class="toolbar">
+    <span>Ordenar por:</span>
+
+    <a asp-action="Index"
+       asp-route-pesquisa="@Model.textopesquisa"
+       asp-route-ordenarPor="titulo"
+       class="button secondary">
+        Título ↑
+    </a>
+
+    <a asp-action="Index"
+       asp-route-pesquisa="@Model.textopesquisa"
+       asp-route-ordenarPor="titulo_desc"
+       class="button secondary">
+        Título ↓
+    </a>
+
+    <a asp-action="Index"
+       asp-route-pesquisa="@Model.textopesquisa"
+       asp-route-ordenarPor="carga"
+       class="button secondary">
+        Carga Horária ↑
+    </a>
+
+    <a asp-action="Index"
+       asp-route-pesquisa="@Model.textopesquisa"
+       asp-route-ordenarPor="carga_desc"
+       class="button secondary">
+        Carga Horária ↓
+    </a>
+</div>
+
+@if (TempData["Mensagem"] != null)
+{
+    <div class="alert success">
+        @TempData["Mensagem"]
+    </div>
+}
+
+@if (Model.projetos.Count == 0)
+{
+    <div class="empty">
+        <p>Nenhum projeto cadastrado.</p>
+    </div>
+}
+else
+{
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Carga Horária</th>
+                    <th>Professor Responsável</th> <!-- AJUSTADO: Nova coluna no cabeçalho -->
+                    <th>Ações</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var projeto in Model.projetos)
+                {
+                    <tr>
+                        <td>
+                            @projeto.Titulo
+                        </td>
+
+                        <td>
+                            @projeto.CargaHoraria horas
+                        </td>
+
+                        <td>
+                            @(projeto.Professor?.Nome ?? "Sem Professor") <!-- AJUSTADO: Exibe o nome do professor ou aviso se nulo -->
+                        </td>
+
+                        <td class="actions">
+                            <a asp-action="Detalhes"
+                               asp-route-id="@projeto.Id">
+                                Detalhes
+                            </a>
+
+                            <a asp-action="Editar"
+                               asp-route-id="@projeto.Id">
+                                Editar
+                            </a>
+
+                            <a asp-action="Excluir"
+                               asp-route-id="@projeto.Id"
+                               class="danger-link">
+                                Excluir
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,50 @@
+﻿@model GerenciadorAcademico.Models.Projeto
+
+@{
+    ViewData["Title"] = "Excluir Projeto";
+}
+
+<h2>Excluir Projeto</h2>
+
+<hr />
+
+<div class="alert alert-warning">
+    <h4>Tem certeza de que deseja excluir este projeto?</h4>
+    <p>Essa ação não poderá ser desfeita.</p>
+</div>
+
+<div class="card">
+    <div class="card-body">
+
+        <h4 class="card-title">
+            @Model.Titulo
+        </h4>
+
+        <p class="card-text">
+            <strong>Descrição:</strong>
+            @Model.Descricao
+        </p>
+
+        <p class="card-text">
+            <strong>Carga Horária:</strong>
+            @Model.CargaHoraria horas
+        </p>
+
+        <form asp-action="Excluir" method="post">
+
+            <input type="hidden" asp-for="Id" />
+
+            <button type="submit"
+                    class="btn btn-danger">
+                Confirmar Exclusão
+            </button>
+
+            <a asp-action="Index"
+               class="btn btn-secondary ms-2">
+                Cancelar
+            </a>
+
+        </form>
+
+    </div>
+</div>

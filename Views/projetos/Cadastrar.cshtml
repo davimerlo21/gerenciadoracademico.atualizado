@@ -1,0 +1,88 @@
+﻿@model GerenciadorAcademico.ViewModels.NovoProjetoViewModel
+
+@{
+    ViewData["Title"] = "Cadastrar Projeto";
+}
+
+<h2>Cadastrar Novo Projeto</h2>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+
+        <form asp-action="Cadastrar" method="post">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3">
+            </div>
+
+            <div class="mb-3">
+
+                <label asp-for="Titulo" class="form-label">
+                    Título do Projeto
+                </label>
+
+                <input asp-for="Titulo"
+                       class="form-control" />
+
+                <span asp-validation-for="Titulo"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+            <div class="mb-3">
+
+                <label asp-for="Descricao" class="form-label">
+                    Descrição
+                </label>
+
+                <textarea asp-for="Descricao"
+                          class="form-control"
+                          rows="3"></textarea>
+
+                <span asp-validation-for="Descricao"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+            <div class="mb-3">
+
+                <label asp-for="CargaHoraria" class="form-label">
+                    Carga Horária (Horas)
+                </label>
+
+                <input asp-for="CargaHoraria"
+                       type="number"
+                       class="form-control" />
+
+                <span asp-validation-for="CargaHoraria"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+            <div class="mt-4">
+
+                <button type="submit"
+                        class="btn btn-success">
+                    Salvar Projeto
+                </button>
+
+                <a asp-action="Index"
+                   class="btn btn-secondary ms-2">
+                    Cancelar
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
