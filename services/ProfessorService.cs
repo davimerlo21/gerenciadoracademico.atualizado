@@ -19,5 +19,5 @@ public class ProfessorService : IProfessorService
     public Professor? ObterPorId(int id)
     {
         return _professores.FirstOrDefault(p => p.Id == id);
-    }
+    } 
 }
