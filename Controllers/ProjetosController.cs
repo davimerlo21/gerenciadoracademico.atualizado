@@ -2,7 +2,7 @@
 using gerenciadoracademico.services;
 using GerenciadorAcademico.ViewModels;
 using GerenciadorAcademico.Services;
-using GerenciadorAcademico.ViewModels;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
