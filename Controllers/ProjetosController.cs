@@ -1,36 +1,35 @@
-﻿using gerenciadoracademico.Models;
-using gerenciadoracademico.services;
-using GerenciadorAcademico.ViewModels;
+﻿using gerenciadoracademico.services;
+using GerenciadorAcademico.Models;
 using GerenciadorAcademico.Services;
-
+using GerenciadorAcademico.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace gerenciadoracademico.Controllers;
+namespace GerenciadorAcademico.Controllers;
 
 public class ProjetosController : Controller
 {
     private readonly IProjetoService _projetoService;
     private readonly IProfessorService _professorService;
 
-    // Construtor recebendo ambos os serviços necessários
-    public ProjetosController(IProjetoService projetoService, IProfessorService professorService)
+    public ProjetosController(
+        IProjetoService projetoService,
+        IProfessorService professorService)
     {
         _projetoService = projetoService;
         _professorService = professorService;
     }
 
-    // LISTAR
+    // LISTAR PROJETOS
     [HttpGet]
-    public IActionResult Index(string? pesquisa, string? ordenarPor)
+    public async Task<IActionResult> Index(string? pesquisa, string? ordenarPor)
     {
-        var projetos = _projetoService.PesquisarPorTitulo(pesquisa);
+        var projetos = await _projetoService.PesquisarPorTituloAsync(pesquisa);
         projetos = _projetoService.Ordenar(projetos, ordenarPor);
 
-        // Vincula o objeto Professor a cada projeto antes de ir para a tela
         foreach (var projeto in projetos)
         {
-            projeto.Professor = _professorService.ObterPorId(projeto.ProfessorId);
+            projeto.Professor = await _professorService.ObterPorIdAsync(projeto.ProfessorId);
         }
 
         var model = new ProjetosIndexViewModel
@@ -44,44 +43,44 @@ public class ProjetosController : Controller
         return View(model);
     }
 
-    // DETALHES
+    // VER DETALHES
     [HttpGet]
-    public IActionResult Detalhes(int id)
+    public async Task<IActionResult> Detalhes(int id)
     {
-        var projeto = _projetoService.ObterPorId(id);
+        var projeto = await _projetoService.ObterPorIdAsync(id);
 
         if (projeto is null)
             return NotFound();
 
-        projeto.Professor = _professorService.ObterPorId(projeto.ProfessorId);
+        projeto.Professor = await _professorService.ObterPorIdAsync(projeto.ProfessorId);
 
         return View(projeto);
     }
 
     // ABRIR TELA DE CADASTRO
     [HttpGet]
-    public IActionResult Cadastrar()
+    public async Task<IActionResult> Cadastrar()
     {
         var model = new NovoProjetoViewModel
         {
-            Professores = ObterListaProfessores()
+            Professores = await ObterListaProfessoresAsync()
         };
 
         return View(model);
     }
 
-    // SALVAR CADASTRO
+    // SALVAR CADASTRO (POST)
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Cadastrar(NovoProjetoViewModel model)
+    public async Task<IActionResult> Cadastrar(NovoProjetoViewModel model)
     {
         if (!ModelState.IsValid)
         {
-            model.Professores = ObterListaProfessores();
+            model.Professores = await ObterListaProfessoresAsync();
             return View(model);
         }
 
-        _projetoService.Adicionar(model);
+        await _projetoService.AdicionarAsync(model);
 
         TempData["Mensagem"] = "Projeto cadastrado com sucesso!";
 
@@ -90,9 +89,9 @@ public class ProjetosController : Controller
 
     // ABRIR TELA DE EDIÇÃO
     [HttpGet]
-    public IActionResult Editar(int id)
+    public async Task<IActionResult> Editar(int id)
     {
-        var projeto = _projetoService.ObterPorId(id);
+        var projeto = await _projetoService.ObterPorIdAsync(id);
 
         if (projeto is null)
             return NotFound();
@@ -104,26 +103,25 @@ public class ProjetosController : Controller
             Descricao = projeto.Descricao,
             CargaHoraria = projeto.CargaHoraria,
             ProfessorId = projeto.ProfessorId,
-            Professores = ObterListaProfessores()
+            Professores = await ObterListaProfessoresAsync()
         };
 
         return View(model);
     }
 
-    // SALVAR EDIÇÃO
+    // SALVAR EDIÇÃO (POST)
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Editar(EditarProjetoViewModel model)
+    public async Task<IActionResult> Editar(EditarProjetoViewModel model)
     {
         if (!ModelState.IsValid)
         {
-            model.Professores = ObterListaProfessores();
+            model.Professores = await ObterListaProfessoresAsync();
             return View(model);
         }
 
-        var updated = _projetoService.Atualizar(model);
-
-        if (!updated)
+        var atualizou = await _projetoService.AtualizarAsync(model);
+        if (!atualizou)
             return NotFound();
 
         TempData["Mensagem"] = "Projeto updated com sucesso!";
@@ -131,44 +129,30 @@ public class ProjetosController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    // ABRIR TELA DE CONFIRMAÇÃO DE EXCLUSÃO
-    [HttpGet]
-    public IActionResult Excluir(int id)
-    {
-        var projeto = _projetoService.ObterPorId(id);
-
-        if (projeto is null)
-            return NotFound();
-
-        projeto.Professor = _professorService.ObterPorId(projeto.ProfessorId);
-
-        return View(projeto);
-    }
-
-    // CONFIRMAR EXCLUSÃO
+    // EXCLUIR PROJETO (POST)
     [HttpPost]
-    [ActionName("Excluir")]
     [ValidateAntiForgeryToken]
-    public IActionResult ConfirmarExclusao(int id)
+    public async Task<IActionResult> Remover(int id)
     {
-        var removido = _projetoService.Remover(id);
-
-        if (!removido)
+        var removeu = await _projetoService.RemoverAsync(id);
+        if (!removeu)
             return NotFound();
 
-        TempData["Mensagem"] = "Projeto excluído com sucesso!";
+        TempData["Mensagem"] = "Projeto removido com sucesso!";
 
         return RedirectToAction(nameof(Index));
     }
 
-    // Método auxiliar para popular os professores no select
-    private List<SelectListItem> ObterListaProfessores()
+    // MÉTODO AUXILIAR PARA POPULAR O DROP-DOWN DE PROFESSORES
+    private async Task<List<SelectListItem>> ObterListaProfessoresAsync()
     {
-        return _professorService.ObterTodos()
-            .Select(p => new SelectListItem
-            {
-                Value = p.Id.ToString(),
-                Text = p.Nome
-            }).ToList();
+        // CORRIGIDO: Agora consome ListarProfessoresAsync da _projetoService conforme o Passo 2 do tutorial
+        var professores = await _projetoService.ListarProfessoresAsync();
+
+        return professores.Select(p => new SelectListItem
+        {
+            Value = p.Id.ToString(),
+            Text = p.Nome
+        }).ToList();
     }
 }

@@ -11,13 +11,14 @@ public class ProfessorService : IProfessorService
         new Professor { Id = 2, Nome = "Carlos Mendes", Email = "carlos.mendes@academia.com" }
     ];
 
-    public List<Professor> ObterTodos()
+    public Task<List<Professor>> ObterTodosAsync()
     {
-        return _professores;
+        return Task.FromResult(_professores);
     }
 
-    public Professor? ObterPorId(int id)
+    public Task<Professor?> ObterPorIdAsync(int id)
     {
-        return _professores.FirstOrDefault(p => p.Id == id);
-    } 
+        var professor = _professores.FirstOrDefault(p => p.Id == id);
+        return Task.FromResult(professor);
+    }
 }

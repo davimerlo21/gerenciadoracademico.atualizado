@@ -1,35 +1,53 @@
 using gerenciadoracademico.services;
+using GerenciadorAcademico.Data;
+using GerenciadorAcademico.Repositories;
 using GerenciadorAcademico.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Adiciona os serviços para o padrão MVC (Controllers com Views)
+// Adiciona os serviços do MVC
 builder.Services.AddControllersWithViews();
 
 // ==========================================
-// REGISTRO DOS SERVIÇOS EM MEMÓRIA (SINGLETON)
+// REGISTRO DA PERSISTÊNCIA EM JSON
 // ==========================================
+
+// Configuração dos arquivos locais na pasta Data
+builder.Services.AddSingleton(sp => new JsonFileStore("projetos.json"));
+builder.Services.AddSingleton(sp => new JsonFileStore("professores.json"));
+
+// Registro das interfaces e classes de repositório
+builder.Services.AddSingleton<IProjetoRepository, ProjetoJsonRepository>();
+builder.Services.AddSingleton<IProfessorRepository, ProfessorJsonRepository>();
+
+// Serviços da aplicação
 builder.Services.AddSingleton<IProjetoService, ProjetoService>();
 builder.Services.AddSingleton<IProfessorService, ProfessorService>();
 
 var app = builder.Build();
 
-// Configura o pipeline de requisições HTTP
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    // O valor padrão do HSTS é de 30 dias. Você pode querer mudar isso para cenários de produção.
-    app.UseHsts();
-}
+// ==========================================
+// CONFIGURAÇÃO DE ERROS
+// ==========================================
 
+// TEMPORARIAMENTE: mostra os detalhes do erro
+app.UseDeveloperExceptionPage();
+
+// HTTPS
 app.UseHttpsRedirection();
+
+// Arquivos estáticos
 app.UseStaticFiles();
 
+// Roteamento
 app.UseRouting();
 
+// Autorização
 app.UseAuthorization();
 
-// Configura a rota padrão do sistema (Inicia na tela de Login do HomeController)
+// ==========================================
+// ROTA PADRÃO
+// ==========================================
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

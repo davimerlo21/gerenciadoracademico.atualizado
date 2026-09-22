@@ -5,15 +5,20 @@ namespace GerenciadorAcademico.Services;
 
 public interface IProjetoService
 {
-    List<Projeto> PesquisarPorTitulo(string? titulo);
+    Task<List<Projeto>> ListarAsync();
 
-    Projeto? ObterPorId(int id);
+    Task<List<Projeto>> PesquisarPorTituloAsync(string? titulo);
 
     List<Projeto> Ordenar(IEnumerable<Projeto> projetos, string? ordenarPor);
 
-    void Adicionar(NovoProjetoViewModel model);
+    Task<Projeto?> ObterPorIdAsync(int id);
 
-    bool Atualizar(EditarProjetoViewModel model);
+    // O método que estava faltando declarar na interface:
+    Task<List<Professor>> ListarProfessoresAsync();
 
-    bool Remover(int id);
+    Task AdicionarAsync(NovoProjetoViewModel model);
+
+    Task<bool> AtualizarAsync(EditarProjetoViewModel model);
+
+    Task<bool> RemoverAsync(int id);
 }

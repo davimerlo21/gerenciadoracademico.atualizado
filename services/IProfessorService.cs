@@ -5,6 +5,6 @@ namespace gerenciadoracademico.services;
 
 public interface IProfessorService
 {
-    List<Professor> ObterTodos();
-    Professor? ObterPorId(int id);
+    Task<List<Professor>> ObterTodosAsync();
+    Task<Professor?> ObterPorIdAsync(int id);
 }

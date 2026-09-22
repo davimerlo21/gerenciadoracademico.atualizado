@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "nome": "Ana Souza",
+    "email": "ana.souza@gerenciadoracademico.edu.br"
+  },
+  {
+    "id": 2,
+    "nome": "Bruno Almeida",
+    "email": "bruno.almeida@gerenciadoracademico.edu.br"
+  }
+]

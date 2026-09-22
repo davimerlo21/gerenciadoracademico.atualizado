@@ -1,42 +1,41 @@
 ﻿using GerenciadorAcademico.Models;
+using GerenciadorAcademico.Repositories;
 using GerenciadorAcademico.ViewModels;
 
 namespace GerenciadorAcademico.Services;
 
 public class ProjetoService : IProjetoService
 {
-    private readonly List<Projeto> _projetos =
-    [
-        new Projeto
-        {
-            Id = 1,
-            Titulo = "Sistema de Biblioteca Escolar",
-            Descricao = "Aplicação para controle de livros e empréstimos.",
-            CargaHoraria = 80,
-            ProfessorId = 1
-        },
+    private readonly IProjetoRepository _projetoRepository;
+    private readonly IProfessorRepository _professorRepository;
 
-        new Projeto
-        {
-            Id = 2,
-            Titulo = "Portal de Projetos Acadêmicos",
-            Descricao = "Sistema para divulgação de projetos desenvolvidos pelos estudantes.",
-            CargaHoraria = 60,
-            ProfessorId = 2
-        }
-    ];
-
-    public List<Projeto> Listar()
+    // O construtor agora recebe os repositórios do JSON por Injeção de Dependência
+    public ProjetoService(
+        IProjetoRepository projetoRepository,
+        IProfessorRepository professorRepository)
     {
-        return _projetos;
+        _projetoRepository = projetoRepository;
+        _professorRepository = professorRepository;
     }
 
-    public List<Projeto> PesquisarPorTitulo(string? titulo)
+    public async Task<List<Professor>> ListarProfessoresAsync()
     {
-        if (string.IsNullOrWhiteSpace(titulo))
-            return Listar();
+        return await _professorRepository.ObterTodosAsync();
+    }
 
-        return _projetos
+    public async Task<List<Projeto>> ListarAsync()
+    {
+        return await _projetoRepository.ObterTodosAsync();
+    }
+
+    public async Task<List<Projeto>> PesquisarPorTituloAsync(string? titulo)
+    {
+        var projetos = await ListarAsync();
+
+        if (string.IsNullOrWhiteSpace(titulo))
+            return projetos;
+
+        return projetos
             .Where(projeto => projeto.Titulo.Contains(
                 titulo,
                 StringComparison.CurrentCultureIgnoreCase))
@@ -47,49 +46,41 @@ public class ProjetoService : IProjetoService
     {
         return ordenarPor switch
         {
-            "titulo" => projetos
-                .OrderBy(projeto => projeto.Titulo)
-                .ToList(),
-
-            "titulo_desc" => projetos
-                .OrderByDescending(projeto => projeto.Titulo)
-                .ToList(),
-
-            "carga" => projetos
-                .OrderBy(projeto => projeto.CargaHoraria)
-                .ToList(),
-
-            "carga_desc" => projetos
-                .OrderByDescending(projeto => projeto.CargaHoraria)
-                .ToList(),
-
+            "titulo" => projetos.OrderBy(projeto => projeto.Titulo).ToList(),
+            "titulo_desc" => projetos.OrderByDescending(projeto => projeto.Titulo).ToList(),
+            "carga" => projetos.OrderBy(projeto => projeto.CargaHoraria).ToList(),
+            "carga_desc" => projetos.OrderByDescending(projeto => projeto.CargaHoraria).ToList(),
             _ => projetos.ToList()
         };
     }
 
-    public Projeto? ObterPorId(int id)
+    public async Task<Projeto?> ObterPorIdAsync(int id)
     {
-        return _projetos.FirstOrDefault(projeto => projeto.Id == id);
+        return await _projetoRepository.ObterPorIdAsync(id);
     }
 
-    public void Adicionar(NovoProjetoViewModel model)
+    public async Task AdicionarAsync(NovoProjetoViewModel model)
     {
+        var projetos = await ListarAsync();
+
+        // Gera o ID dinamicamente com base nos dados do JSON
+        var novoId = projetos.Count == 0 ? 1 : projetos.Max(p => p.Id) + 1;
+
         var novoProjeto = new Projeto
         {
-            Id = GerarNovoId(),
+            Id = novoId,
             Titulo = model.Titulo,
             Descricao = model.Descricao,
             CargaHoraria = model.CargaHoraria,
             ProfessorId = model.ProfessorId
         };
 
-        _projetos.Add(novoProjeto);
+        await _projetoRepository.AdicionarAsync(novoProjeto);
     }
 
-    public bool Atualizar(EditarProjetoViewModel model)
+    public async Task<bool> AtualizarAsync(EditarProjetoViewModel model)
     {
-        var projeto = ObterPorId(model.Id);
-
+        var projeto = await _projetoRepository.ObterPorIdAsync(model.Id);
         if (projeto is null)
             return false;
 
@@ -98,25 +89,17 @@ public class ProjetoService : IProjetoService
         projeto.CargaHoraria = model.CargaHoraria;
         projeto.ProfessorId = model.ProfessorId;
 
+        await _projetoRepository.AtualizarAsync(projeto);
         return true;
     }
 
-    public bool Remover(int id)
+    public async Task<bool> RemoverAsync(int id)
     {
-        var projeto = ObterPorId(id);
-
+        var projeto = await _projetoRepository.ObterPorIdAsync(id);
         if (projeto is null)
             return false;
 
-        _projetos.Remove(projeto);
-
+        await _projetoRepository.RemoverAsync(id);
         return true;
-    }
-
-    private int GerarNovoId()
-    {
-        return _projetos.Count == 0
-            ? 1
-            : _projetos.Max(projeto => projeto.Id) + 1;
     }
 }

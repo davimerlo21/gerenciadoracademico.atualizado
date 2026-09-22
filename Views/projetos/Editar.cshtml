@@ -20,64 +20,47 @@
             </div>
 
             <div class="mb-3">
-
                 <label asp-for="Titulo" class="form-label">
                     Título do Projeto
                 </label>
-
-                <input asp-for="Titulo"
-                       class="form-control" />
-
-                <span asp-validation-for="Titulo"
-                      class="text-danger">
-                </span>
-
+                <input asp-for="Titulo" class="form-control" />
+                <span asp-validation-for="Titulo" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-
                 <label asp-for="Descricao" class="form-label">
                     Descrição
                 </label>
-
-                <textarea asp-for="Descricao"
-                          class="form-control"
-                          rows="3"></textarea>
-
-                <span asp-validation-for="Descricao"
-                      class="text-danger">
-                </span>
-
+                <textarea asp-for="Descricao" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Descricao" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-
                 <label asp-for="CargaHoraria" class="form-label">
                     Carga Horária (Horas)
                 </label>
+                <input asp-for="CargaHoraria" type="number" class="form-control" />
+                <span asp-validation-for="CargaHoraria" class="text-danger"></span>
+            </div>
 
-                <input asp-for="CargaHoraria"
-                       type="number"
-                       class="form-control" />
-
-                <span asp-validation-for="CargaHoraria"
-                      class="text-danger">
-                </span>
-
+            <!-- ACERTO: Adicionado o campo de seleção do Professor Responsável -->
+            <div class="mb-3">
+                <label asp-for="ProfessorId" class="form-label">
+                    Professor Responsável
+                </label>
+                <select asp-for="ProfessorId" asp-items="Model.Professores" class="form-select">
+                    <option value="">-- Selecione um Professor --</option>
+                </select>
+                <span asp-validation-for="ProfessorId" class="text-danger"></span>
             </div>
 
             <div class="mt-4">
-
-                <button type="submit"
-                        class="btn btn-primary">
+                <button type="submit" class="btn btn-primary">
                     Salvar Alterações
                 </button>
-
-                <a asp-action="Index"
-                   class="btn btn-secondary ms-2">
+                <a asp-action="Index" class="btn btn-secondary ms-2">
                     Cancelar
                 </a>
-
             </div>
 
         </form>
