@@ -1,9 +1,12 @@
-﻿using GerenciadorAcademico.Models;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using GerenciadorAcademico.Models;
 
-namespace GerenciadorAcademico.Repositories;
-
-public interface IProfessorRepository
+namespace GerenciadorAcademico.Repositories
 {
-    Task<List<Professor>> ObterTodosAsync();
-    Task<Professor?> ObterPorIdAsync(int id);
+    public interface IProfessorRepository
+    {
+        Task<List<Professor>> ObterTodosAsync();
+        Task<Professor?> ObterPorIdAsync(int id);
+    }
 }

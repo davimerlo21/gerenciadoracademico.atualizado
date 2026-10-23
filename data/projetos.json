@@ -1,0 +1,10 @@
+[
+  {
+    "id": 1,
+    "titulo": "Automa\u00E7\u00E3o de Processos com Machine Learning",
+    "descricao": " Pesquisa e desenvolvimento de modelos preditivos para identificar padr\u00F5es de evas\u00E3o escolar em turmas de gradua\u00E7\u00E3o, utilizando Python e bibliotecas de an\u00E1lise de dados.",
+    "cargaHoraria": 45,
+    "professorId": 0,
+    "professor": null
+  }
+]

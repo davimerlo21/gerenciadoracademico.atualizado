@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using GerenciadorAcademico.Models;
-using GerenciadorAcademico.Data;
+using gerenciadoracademico.Repositories;
 
 namespace GerenciadorAcademico.Repositories
 {

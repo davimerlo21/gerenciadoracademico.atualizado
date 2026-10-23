@@ -1,27 +1,48 @@
 ﻿@model GerenciadorAcademico.ViewModels.NovoProjetoViewModel
 
-<div class="mb-3">
-    <label asp-for="Titulo" class="form-label">Título do Projeto</label>
-    <input asp-for="Titulo" class="input" />
-    <span asp-validation-for="Titulo" class="validation"></span>
+<div class="form-group mb-3">
+    <label asp-for="Titulo" class="control-label">Título do Projeto</label>
+    <input asp-for="Titulo" class="form-control" />
+    <span asp-validation-for="Titulo" class="text-danger"></span>
 </div>
 
-<div class="mb-3">
-    <label asp-for="Descricao" class="form-label">Descrição</label>
-    <textarea asp-for="Descricao" class="input" rows="3"></textarea>
-    <span asp-validation-for="Descricao" class="validation"></span>
+<div class="form-group mb-3">
+    <label asp-for="Descricao" class="control-label">Descrição</label>
+    <textarea asp-for="Descricao" class="form-control" rows="3"></textarea>
+    <span asp-validation-for="Descricao" class="text-danger"></span>
 </div>
 
-<div class="mb-3">
-    <label asp-for="CargaHoraria" class="form-label">Carga Horária (Horas)</label>
-    <input asp-for="CargaHoraria" type="number" class="input" />
-    <span asp-validation-for="CargaHoraria" class="validation"></span>
+<div class="form-group mb-3">
+    <label asp-for="Area" class="control-label">Área de Pesquisa</label>
+    <input asp-for="Area" class="form-control" />
+    <span asp-validation-for="Area" class="text-danger"></span>
 </div>
 
-<div class="mb-3">
-    <label asp-for="ProfessorId" class="form-label">Professor Responsável</label>
-    <select asp-for="ProfessorId" asp-items="Model.Professores" class="input">
-        <option value="">-- Selecione um Professor --</option>
+<div class="form-group mb-3">
+    <label asp-for="CargaHoraria" class="control-label">Carga Horária (horas)</label>
+    <input asp-for="CargaHoraria" type="number" class="form-control" />
+    <span asp-validation-for="CargaHoraria" class="text-danger"></span>
+</div>
+
+<!-- CORREÇÃO DO DROPDOWN: Agora lê corretamente de ViewBag.Professores -->
+<div class="form-group mb-3">
+    <label class="control-label">Professor Orientador</label>
+    <select asp-for="ProfessorId" asp-items="ViewBag.Professores" class="form-control">
+        <option value="">-- Selecione o Professor --</option>
     </select>
-    <span asp-validation-for="ProfessorId" class="validation"></span>
+    <span asp-validation-for="ProfessorId" class="text-danger"></span>
+</div>
+
+<!-- LÓGICA DA PROFESSORA: Campos separados para capturar a Data e a Hora -->
+<div class="row">
+    <div class="col-md-6 form-group mb-3">
+        <label class="control-label">Data de Entrega</label>
+        <input asp-for="DataInput" type="date" class="form-control" />
+        <span asp-validation-for="DataInput" class="text-danger"></span>
+    </div>
+    <div class="col-md-6 form-group mb-3">
+        <label class="control-label">Horário de Entrega</label>
+        <input asp-for="HoraInput" type="time" class="form-control" />
+        <span asp-validation-for="HoraInput" class="text-danger"></span>
+    </div>
 </div>

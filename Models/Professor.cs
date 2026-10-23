@@ -7,5 +7,5 @@ public class Professor
     public string Email { get; set; } = string.Empty;
 
     // Navegação: Um professor tem muitos projetos
-    public List<Projeto> Projetos { get; set; } = [];
+    public ICollection<Projeto> Projetos { get; set; } = new List<Projeto>();
 }

@@ -9,7 +9,6 @@ public class ProjetoService : IProjetoService
     private readonly IProjetoRepository _projetoRepository;
     private readonly IProfessorRepository _professorRepository;
 
-    // O construtor agora recebe os repositórios do JSON por Injeção de Dependência
     public ProjetoService(
         IProjetoRepository projetoRepository,
         IProfessorRepository professorRepository)
@@ -61,18 +60,21 @@ public class ProjetoService : IProjetoService
 
     public async Task AdicionarAsync(NovoProjetoViewModel model)
     {
-        var projetos = await ListarAsync();
+        string dataHoraCompleta = $"{model.DataInput} {model.HoraInput}";
 
-        // Gera o ID dinamicamente com base nos dados do JSON
-        var novoId = projetos.Count == 0 ? 1 : projetos.Max(p => p.Id) + 1;
+        if (!DateTime.TryParse(dataHoraCompleta, out DateTime dataConvertida))
+        {
+            dataConvertida = DateTime.Now;
+        }
 
         var novoProjeto = new Projeto
         {
-            Id = novoId,
             Titulo = model.Titulo,
             Descricao = model.Descricao,
+            Area = model.Area,
             CargaHoraria = model.CargaHoraria,
-            ProfessorId = model.ProfessorId
+            ProfessorId = model.ProfessorId,
+            DataEntrega = dataConvertida
         };
 
         await _projetoRepository.AdicionarAsync(novoProjeto);

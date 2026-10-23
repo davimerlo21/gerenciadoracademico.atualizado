@@ -1,7 +1,13 @@
-﻿using gerenciadoracademico.Models;
-using GerenciadorAcademico.Models;
+﻿using GerenciadorAcademico.Models;
 
-namespace gerenciadoracademico.services;
+namespace GerenciadorAcademico.Services;
+
+// ESTA INTERFACE ESTAVA FALTANDO E FOI ADICIONADA AQUI:
+public interface IProfessorService
+{
+    Task<List<Professor>> ObterTodosAsync();
+    Task<Professor?> ObterPorIdAsync(int id);
+}
 
 public class ProfessorService : IProfessorService
 {

@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 
-namespace GerenciadorAcademico.Data
+namespace gerenciadoracademico.Repositories
 {
     public class JsonFileStore
     {

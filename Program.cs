@@ -1,53 +1,41 @@
-using gerenciadoracademico.services;
+using Microsoft.EntityFrameworkCore;
 using GerenciadorAcademico.Data;
+using GerenciadorAcademico.Models;
 using GerenciadorAcademico.Repositories;
-using GerenciadorAcademico.Services;
+using GerenciadorAcademico.Services; // Caso sua pasta use 's' minúsculo, o Visual Studio ajusta automaticamente com o 'using' correto
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Adiciona os serviços do MVC
 builder.Services.AddControllersWithViews();
 
-// ==========================================
-// REGISTRO DA PERSISTÊNCIA EM JSON
-// ==========================================
+// Configuração da Connection String do SQL Server
+var connectionString = builder.Configuration.GetConnectionString("AcademicoConnection")
+    ?? throw new InvalidOperationException("A conexão AcademicoConnection não foi configurada.");
 
-// Configuração dos arquivos locais na pasta Data
-builder.Services.AddSingleton(sp => new JsonFileStore("projetos.json"));
-builder.Services.AddSingleton(sp => new JsonFileStore("professores.json"));
+builder.Services.AddDbContext<AcademicoContext>(options =>
+    options.UseSqlServer(connectionString));
 
-// Registro das interfaces e classes de repositório
-builder.Services.AddSingleton<IProjetoRepository, ProjetoJsonRepository>();
-builder.Services.AddSingleton<IProfessorRepository, ProfessorJsonRepository>();
-
-// Serviços da aplicação
-builder.Services.AddSingleton<IProjetoService, ProjetoService>();
-builder.Services.AddSingleton<IProfessorService, ProfessorService>();
+// Registro dos Repositórios e Serviços (Scoped por conta do EF Core)
+builder.Services.AddScoped<IProfessorRepository, ProfessorRepository>();
+builder.Services.AddScoped<IProjetoRepository, ProjetoRepository>();
+builder.Services.AddScoped<IProjetoService, ProjetoService>();
 
 var app = builder.Build();
 
-// ==========================================
-// CONFIGURAÇÃO DE ERROS
-// ==========================================
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
 
-// TEMPORARIAMENTE: mostra os detalhes do erro
-app.UseDeveloperExceptionPage();
-
-// HTTPS
 app.UseHttpsRedirection();
-
-// Arquivos estáticos
 app.UseStaticFiles();
 
-// Roteamento
 app.UseRouting();
 
-// Autorização
 app.UseAuthorization();
 
-// ==========================================
-// ROTA PADRÃO
-// ==========================================
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

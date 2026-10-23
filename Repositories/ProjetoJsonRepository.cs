@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GerenciadorAcademico.Models;
-using GerenciadorAcademico.Data; // Ajustado para encontrar o JsonFileStore que está na pasta Data
+using gerenciadoracademico.Repositories; // Ajustado para encontrar o JsonFileStore que está na pasta Data
+using gerenciadoracademico;
 
 namespace GerenciadorAcademico.Repositories
 {
